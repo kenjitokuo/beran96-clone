@@ -1,0 +1,11 @@
+quantity,value
+closed_subalgebras,21748
+maximal_obstructions_total,17
+maximal_block_obstructions,4
+maximal_shadow_obstructions,10
+maximal_synchronization_obstructions,3
+projection_obstructions_total,9
+projection_block_obstructions,2
+projection_shadow_obstructions,4
+projection_synchronization_obstructions,3
+synchronization_obstructions_total,3
