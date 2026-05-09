@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, Tuple
 
+from beran_terms import TERMS, eval_block, validate_terms
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 LOGS_DIR = ROOT / "logs"
@@ -34,15 +36,6 @@ TABLE_TO_SHADOW: Dict[Tuple[int, int, int, int], str] = {v: k for k, v in SHADOW
 
 BLOCKS = ("ZERO", "X", "Y", "NOT_Y", "NOT_X", "ONE")
 
-BLOCK_COMPLEMENT = {
-    "ZERO": "ONE",
-    "ONE": "ZERO",
-    "X": "NOT_X",
-    "NOT_X": "X",
-    "Y": "NOT_Y",
-    "NOT_Y": "Y",
-}
-
 
 @dataclass(frozen=True)
 class BeranOperation:
@@ -52,6 +45,8 @@ class BeranOperation:
 
 
 def load_beran96(path: Path | None = None) -> list[BeranOperation]:
+    validate_terms()
+
     input_path = path if path is not None else DATA_DIR / "beran96.csv"
     operations: list[BeranOperation] = []
     with input_path.open("r", encoding="utf-8-sig", newline="") as f:
@@ -82,6 +77,15 @@ def load_beran96(path: Path | None = None) -> list[BeranOperation]:
         if op.shadow not in SHADOW_TABLES:
             raise ValueError(f"Unknown shadow: {op.shadow}")
 
+    block_by_id = {op.beran_id: op.block for op in operations}
+    for beran_id, expr in TERMS.items():
+        expected_block = block_by_id[beran_id]
+        computed_block = eval_block(expr, "X", "Y")
+        if computed_block != expected_block:
+            raise ValueError(
+                f"Block mismatch for Beran {beran_id}: expected {expected_block}, got {computed_block}"
+            )
+
     return operations
 
 
@@ -107,20 +111,9 @@ def compose_shadow(outer: str, left: str, right: str) -> str:
     return TABLE_TO_SHADOW[table]
 
 
-def compose_block(outer: str, left: str, right: str) -> str:
-    if outer == "ZERO":
-        return "ZERO"
-    if outer == "ONE":
-        return "ONE"
-    if outer == "X":
-        return left
-    if outer == "Y":
-        return right
-    if outer == "NOT_X":
-        return BLOCK_COMPLEMENT[left]
-    if outer == "NOT_Y":
-        return BLOCK_COMPLEMENT[right]
-    raise ValueError(f"Unknown outer block: {outer}")
+def compose_block(outer: BeranOperation, left: BeranOperation, right: BeranOperation) -> str:
+    outer_term = TERMS[outer.beran_id]
+    return eval_block(outer_term, left.block, right.block)
 
 
 def compose_operation(
@@ -129,6 +122,6 @@ def compose_operation(
     right: BeranOperation,
     pair_to_id: dict[tuple[str, str], int],
 ) -> int:
-    block = compose_block(outer.block, left.block, right.block)
+    block = compose_block(outer, left, right)
     shadow = compose_shadow(outer.shadow, left.shadow, right.shadow)
     return pair_to_id[(block, shadow)]

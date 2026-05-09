@@ -1,0 +1,4 @@
+name,generators,with_projections,closure_size,is_full
+nand_basis,15 22 39,True,96,True
+complete_binary_basis,22 39 63 69 78 95,True,96,True
+shadow_meet_basis,2 22 39,True,3,False
