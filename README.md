@@ -41,6 +41,7 @@ Run the following commands from the repository root.
     python src\build_composition_table.py
     python src\normalize_closed_subalgebras.py
     python src\extract_maximal_obstructions.py
+    python src\write_synchronization_obstructions.py
     python src\write_example_basis_closures.py
     python src\write_example_smid_numbers.py
     python src\write_verification_summary.py
