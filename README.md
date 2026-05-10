@@ -28,6 +28,7 @@ The repository reproduces the finite verification results used in the paper:
 - `logs/closed_subalgebras.csv`
 - `logs/maximal_obstructions.csv`
 - `logs/projection_obstructions.csv`
+- `logs/synchronization_obstructions.csv`
 - `logs/example_basis_closures.csv`
 - `logs/example_smid_beran_numbers.csv`
 - `logs/verification_summary.csv`
@@ -67,3 +68,4 @@ The regression tests fix the following claims:
 ## Python version
 
 The scripts were tested with Python 3.14.
+
