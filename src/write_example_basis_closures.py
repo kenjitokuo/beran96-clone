@@ -8,7 +8,7 @@ from closure_tools import closure_of, contains_projections
 
 EXAMPLES = [
     ("nand_basis", [15], True),
-    ("complete_binary_basis", [63, 69, 78, 95], True),
+    ("complete_binary_basis", [63, 69, 78], True),
     ("shadow_meet_basis", [2], True),
 ]
 
